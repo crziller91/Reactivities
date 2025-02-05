@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios';
 import { Container } from 'semantic-ui-react';
 import { Activity } from '../models/activity';
 import NavBar from './NavBar';
 import ActivityDashboard from '../../features/activities/dashboard/ActivityDashboard';
 import {v4 as uuid} from 'uuid';
+import agent from '../API/agent';
+import LoadingComponent from './LoadingComponent';
 
 function App() {
 
@@ -16,12 +17,22 @@ function App() {
   const [selectedActivity, setSelectedActivity] = useState<Activity | undefined>(undefined);
   // Don't need to specify the type since it will infer based on the input
   const [editMode, setEditMode] = useState(false);
+  // Loading application indicator
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    axios.get<Activity[]>('http://localhost:5000/api/activities')
-      // Wait until the axios.get is finished (then). Then set the activites array with the contents
-      .then(response => {
-        setActivities(response.data);
+    // Using the agent here to call the axios request, enabling type safety and organization
+    agent.Activities.list().then(response => {
+        let activities: Activity[] = [];
+        response.forEach(activity => {
+          // Split out the date string. This removes the time stamp and keeps the date
+          activity.date = activity.date.split('T')[0];
+          activities.push(activity);
+        })
+        setActivities(activities);
+        // Loaded everything so set it to false
+        setLoading(false);
       })
   }, []) //Adding this array at the end here means everything inside the useEffect executes once and once only
 
@@ -52,12 +63,25 @@ function App() {
     // - Filter out the existing activity with the same id
     // - Add the updated activity to the list
     // If there is no id, it is a new activity and we just add it to the list
-    activity.id ? setActivities([...activities.filter(x => x.id !== activity.id), activity]) :
-    setActivities([...activities, {...activity, id: uuid()}]);
-    // Exit the edit mode since the create or edit operation is complete
-    setEditMode(false);
-    // Set the newly created or updated activity as the currently selected activity
-    setSelectedActivity(activity);
+    setSubmitting(true);
+    // If the activity id is already present, then we simply need to update the changed contents of the activity
+    if (activity.id) {
+      agent.Activities.update(activity).then(() => {
+        setActivities([...activities.filter(x => x.id !== activity.id), activity])
+        setSelectedActivity(activity);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    } else {
+      // Brand new activity
+      activity.id = uuid();
+      agent.Activities.create(activity).then(() => {
+        setActivities([...activities, activity]);
+        setSelectedActivity(activity);
+        setEditMode(false);
+        setSubmitting(false);
+      })
+    }
   }
 
   // Deletes an activity from the list of activities
@@ -65,8 +89,14 @@ function App() {
     // Update the activities state by filtering out the activity with the specified id.
     // The filter method creates a new array that only includes activities whose id
     // does NOT match the provided id.
-    setActivities([...activities.filter(x => x.id !== id)]);
+    setSubmitting(true);
+    agent.Activities.delete(id).then(() => {
+      setActivities([...activities.filter(x => x.id !== id)]);
+      setSubmitting(false);
+    })
   }
+
+  if (loading) return <LoadingComponent content='Loading app' />
 
   return (
     <>
@@ -82,6 +112,7 @@ function App() {
           closeForm={handleFormClose}
           createOrEdit={handleCreateOrEditActivity}
           deleteActivity={handleDeleteActivity}
+          submitting={submitting}
         />
       </Container>
     </>
