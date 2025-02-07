@@ -1,15 +1,12 @@
 import { Button, Item, Label, Segment } from "semantic-ui-react";
-import { Activity } from "../../../app/models/activity";
 import { SyntheticEvent, useState } from "react";
+import { useStore } from "../../../app/stores/store";
+import { observer } from "mobx-react-lite";
 
-interface Props {
-    activities: Activity[];
-    selectActivity: (id: string) => void;
-    deleteActivity: (id: string) => void;
-    submitting: boolean;
-}
+export default observer(function ActivityList() {
 
-export default function ActivityList({activities, selectActivity, deleteActivity, submitting}: Props) {
+    const {activityStore} = useStore();
+    const {deleteActivity, activitiesByDate, loading} = activityStore;
     const[target, setTarget] = useState('');
 
     function handleActivityDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
@@ -23,11 +20,11 @@ export default function ActivityList({activities, selectActivity, deleteActivity
         <Segment>
             {/* Divided is going to put a horizontal line in between each activity */}
             <Item.Group divided>
-                {activities.map(activity => (
+                {activitiesByDate.map(activity => (
                     // The key is to let react know that these are each unique items
                     <Item key={activity.id}>
                         <Item.Content>
-                            <Item.Header onClick={() => selectActivity(activity.id)} as='a'>{activity.title}</Item.Header>
+                            <Item.Header onClick={() => activityStore.selectActivity(activity.id)} as='a'>{activity.title}</Item.Header>
                             <Item.Meta>{activity.date}</Item.Meta>
                             <Item.Description>
                                 <div>{activity.description}</div>
@@ -36,12 +33,12 @@ export default function ActivityList({activities, selectActivity, deleteActivity
                             <Item.Extra>
                                 <Button
                                     name={activity.id}
-                                    loading={submitting && target === activity.id}
+                                    loading={loading && target === activity.id}
                                     onClick={(e) => handleActivityDelete(e, activity.id)}
                                     negative floated='right'
                                     content='Delete'
                                 />
-                                <Button onClick={() => selectActivity(activity.id)} floated='right' content='View' color='blue' />
+                                <Button onClick={() => activityStore.selectActivity(activity.id)} floated='right' content='View' color='blue' />
                                 <Label basic content={activity.category} />
                             </Item.Extra>
                         </Item.Content>
@@ -50,4 +47,4 @@ export default function ActivityList({activities, selectActivity, deleteActivity
             </Item.Group>
         </Segment>
     )
-}
+})
