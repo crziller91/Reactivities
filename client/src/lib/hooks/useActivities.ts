@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
 
-export const useActivities = () => {
+export const useActivities = (id?: string) => { // Make the ID parameter optional
 
     const queryClient = useQueryClient()
 
@@ -12,6 +12,16 @@ export const useActivities = () => {
             const response = await agent.get<Activity[]>('/activities')
             return response.data
         }
+    })
+
+    // Gets an individual activity from the list of activities
+    const { data: activity, isLoading: isLoadingActivity } = useQuery({
+        queryKey: ['activities', id],
+        queryFn: async () => {
+            const response = await agent.get<Activity>(`/activities/${id}`)
+            return response.data
+        },
+        enabled: !!id // This only gets executed if we have the id
     })
 
     const updateActivity = useMutation({
@@ -27,7 +37,8 @@ export const useActivities = () => {
 
     const createActivity = useMutation({
         mutationFn: async (activity: Activity) => {
-            await agent.post('/activities', activity)
+            const response = await agent.post('/activities', activity)
+            return response.data // Should be the id of the created activity
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
@@ -50,6 +61,8 @@ export const useActivities = () => {
     return {
         activities,
         isPending,
+        activity,
+        isLoadingActivity,
         updateActivity,
         createActivity,
         deleteActivity
