@@ -1,18 +1,15 @@
 import { Box } from "@mui/material";
 import ActivityCard from "./ActivityCard";
 import { useActivities } from "../../../lib/hooks/useActivities";
-import LoadingPage from "../../../app/shared/components/LoadingPage";
-
 
 export default function ActivityList() {
 
-    const { activities, isPending } = useActivities()
-
-    if (!activities || isPending) return <LoadingPage loading={isPending}/>
+    const { activities } = useActivities()
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            {activities.map(activity => (
+            {activities?.map(activity => (
+                // Activities will always be popoulated here since we check for that on the Activity Dashboard
                 <ActivityCard
                     key={activity.id}
                     activity={activity}

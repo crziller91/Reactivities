@@ -13,7 +13,8 @@ export default function MenuItemLink({children, to}: {children: ReactNode, to: s
             fontWeight: 'bold',
             color: 'inherit',
             '&.active': {
-                outline: '0.13rem solid'
+                outline: '0.1rem solid',
+                borderRadius: 3
             }
         }}
     >
