@@ -2,12 +2,11 @@ import { Paper, Typography, Box, TextField, Button } from "@mui/material"
 import { FormEvent } from "react"
 import { useActivities } from "../../../lib/hooks/useActivities"
 import { Link, useNavigate, useParams } from "react-router"
-import LoadingPage from "../../../app/shared/components/LoadingPage"
 
 export default function ActivityForm() {
 
     const { id } = useParams()
-    const { updateActivity, createActivity, activity, isLoadingActivity } = useActivities(id)
+    const { updateActivity, createActivity, activity } = useActivities(id)
     const navigate = useNavigate()
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -32,8 +31,6 @@ export default function ActivityForm() {
             })
         }
     }
-
-    if (isLoadingActivity) return <LoadingPage loading={isLoadingActivity} />
 
     return (
         <Paper sx={{ borderRadius: 3, padding: 3 }}>

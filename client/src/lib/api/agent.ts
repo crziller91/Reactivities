@@ -1,4 +1,5 @@
 import axios from "axios";
+import { store } from "../stores/store";
 
 // New function to introduce delay into our program
 const sleep = (delay: number) => {
@@ -11,6 +12,12 @@ const agent = axios.create({
     baseURL: import.meta.env.VITE_API_URL
 })
 
+// Loading indicator
+agent.interceptors.request.use(config => {
+    store.uiStore.isBusy()
+    return config
+})
+
 agent.interceptors.response.use(async response => {
     try {
         await sleep(1000)
@@ -18,6 +25,8 @@ agent.interceptors.response.use(async response => {
     } catch (error) {
         console.log(error)
         return Promise.reject(error)
+    } finally {
+        store.uiStore.isIdle()
     }
 })
 

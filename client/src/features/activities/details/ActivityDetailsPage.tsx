@@ -1,7 +1,6 @@
 import { Typography, Grid2 } from "@mui/material"
 import { useParams } from "react-router"
 import { useActivities } from "../../../lib/hooks/useActivities"
-import LoadingPage from "../../../app/shared/components/LoadingPage"
 import ActivityDetailsHeader from "./ActivityDetailsHeader"
 import ActivityDetailsInfo from "./ActivityDetailsInfo"
 import ActivityDetailsChat from "./ActivityDetailsChat"
@@ -11,9 +10,7 @@ export default function ActivityDetailsPage() {
 
   // Get a hold of the id from the root
   const { id } = useParams()
-  const { activity, isLoadingActivity } = useActivities(id)
-
-  if (isLoadingActivity) return <LoadingPage loading={isLoadingActivity}/>
+  const { activity } = useActivities(id)
 
   if (!activity) return <Typography>Activity Not Found</Typography>
 

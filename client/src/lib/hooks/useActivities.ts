@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
+import { useLocation } from "react-router"
 
 export const useActivities = (id?: string) => { // Make the ID parameter optional
 
     const queryClient = useQueryClient()
+    const location = useLocation()
 
     // Using React Query to get the list of activities from our database
     const { data: activities, isPending } = useQuery({
@@ -11,7 +13,9 @@ export const useActivities = (id?: string) => { // Make the ID parameter optiona
         queryFn: async () => {
             const response = await agent.get<Activity[]>('/activities')
             return response.data
-        }
+        },
+        enabled: !id && location.pathname === '/activities',
+        staleTime: 1000 * 60 * 5 // The list will be fresh for 5 min until it is stale
     })
 
     // Gets an individual activity from the list of activities
@@ -21,7 +25,7 @@ export const useActivities = (id?: string) => { // Make the ID parameter optiona
             const response = await agent.get<Activity>(`/activities/${id}`)
             return response.data
         },
-        enabled: !!id // This only gets executed if we have the id
+        enabled: !!id, // This only gets executed if we have the id
     })
 
     const updateActivity = useMutation({
