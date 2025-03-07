@@ -10,9 +10,11 @@ export default function ActivityDetailsPage() {
 
   // Get a hold of the id from the root
   const { id } = useParams()
-  const { activity } = useActivities(id)
+  const { activity, isLoadingActivity } = useActivities(id)
 
-  if (!activity) return <Typography>Activity Not Found</Typography>
+  if (isLoadingActivity) return <Typography></Typography>
+
+  if (!activity) return <Typography>Activity not found</Typography>
 
   return (
     <Grid2 container spacing={3}>
