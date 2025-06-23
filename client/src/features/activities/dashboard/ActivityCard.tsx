@@ -64,7 +64,7 @@ export default function ActivityCard({ activity }: Props) {
                     component={Link}
                     to={`/activities/${activity.id}`}
                     size="medium"
-                    variant="outlined"
+                    variant="contained"
                     sx={{ display: 'flex', justifySelf: 'self-end', borderRadius: 3 }}
                 >View</Button>
             </CardContent>

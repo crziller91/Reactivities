@@ -39,7 +39,7 @@ export default function ActivityDetailsHeader({activity}: Props) {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'flex-end',
-                background: 'linear-gradient(to top, rgba(0, 0, 0, 1.0), transparent)',
+                background: 'linear-gradient(to top, rgba(0, 0, 0, 1.0) 10%, rgba(0, 0, 0, 0.7) 60%, transparent 100%)',
                 boxSizing: 'border-box',
             }}>
                 {/* Text Section */}

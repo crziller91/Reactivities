@@ -1,11 +1,29 @@
 using Domain;
+using Microsoft.AspNetCore.Identity;
 
 namespace Persistence;
 
 public class DbInitializer
 {
-    public static async Task SeedData(AppDbContext context) //Don't need to create a new instance of this class to use the SeedData method (this is the reason for static)
+    public static async Task SeedData(AppDbContext context, UserManager<User> userManager) //Don't need to create a new instance of this class to use the SeedData method (this is the reason for static)
     {
+
+        // Seeds the database with initial users (Bob, Tom, Jane) if none exist, setting their password to "Pa$$w0rd"
+        if (!userManager.Users.Any())
+        {
+            var users = new List<User>
+            {
+                new() {DisplayName = "Bob", UserName = "bob@test.com", Email = "bob@test.com"},
+                new() {DisplayName = "Tom", UserName = "tom@test.com", Email = "tom@test.com"},
+                new() {DisplayName = "Jane", UserName = "jane@test.com", Email = "jane@test.com"}
+            };
+
+            foreach (var user in users)
+            {
+                await userManager.CreateAsync(user, "Pa$$w0rd");
+            }
+        }
+
         // If there are activites, then return nothing and do not continue
         if (context.Activities.Any()) return;
         // Create a new list of activites and populate that with the seed data

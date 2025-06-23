@@ -12,7 +12,6 @@ export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static" sx={{
-        backgroundImage: 'linear-gradient(0deg, rgba(21, 43, 53, 1) 35%, rgba(31, 41, 55, 1) 65%, rgba(41, 38, 53, 1) 100%)',
         position: 'relative'
       }}>
         <Container maxWidth='xl'>
@@ -26,8 +25,8 @@ export default function NavBar() {
             <Box sx={{ display: 'flex' }}>
               <MenuItemLink to='/activities' >Activities</MenuItemLink>
               <MenuItemLink to='/createActivity' >Create Activity</MenuItemLink>
-              <MenuItemLink to='/counter' >Counter</MenuItemLink>
-              <MenuItemLink to='/errors' >Errors</MenuItemLink>
+              {/* <MenuItemLink to='/counter' >Counter</MenuItemLink>
+              <MenuItemLink to='/errors' >Errors</MenuItemLink> */}
             </Box>
             <MenuItem>
               User Menu

@@ -39,17 +39,17 @@ export default function ActivityForm() {
     const onSubmit = async (data: ActivitySchema) => {
         // Destructure all of the properties so that we can flatten the object to send it to our database
         const {location, ...rest} = data
-        // All of the properties are now in flattendeddata
-        const flattendedData = {...rest, ...location}
+        // All of the properties are now in flattenedData
+        const flattenedData  = {...rest, ...location}
         try {
             if (activity) {
                 // Editing an activity
-                updateActivity.mutate({...activity, ...flattendedData}, {
+                updateActivity.mutate({...activity, ...flattenedData}, {
                     onSuccess: () => navigate(`/activities/${activity.id}`)
                 })
             } else {
                 // Creating a brand new activity
-                createActivity.mutate(flattendedData, {
+                createActivity.mutate(flattenedData, {
                     onSuccess: (id) => navigate(`/activities/${id}`)
                 })
             }
@@ -77,9 +77,9 @@ export default function ActivityForm() {
                     <Button loading={updateActivity.isPending || createActivity.isPending}
                         type="submit"
                         color='success'
-                        variant="outlined"
+                        variant="contained"
                     >Submit</Button>
-                    <Button component={Link} to={activity ? `/activities/${id}` : '/activities'} color='inherit' variant="outlined">Cancel</Button>
+                    <Button component={Link} to={activity ? `/activities/${id}` : '/activities'} color='error' variant="contained">Cancel</Button>
                 </Box>
             </Box>
         </Paper>
